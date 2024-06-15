@@ -1,5 +1,4 @@
-# schemas.py
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr
 from typing import Optional
 from datetime import date
 
@@ -21,4 +20,4 @@ class ContactInDB(ContactBase):
     id: int
 
     class Config:
-        from_attributes = True
+        orm_mode = True
