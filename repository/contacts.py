@@ -39,7 +39,25 @@ def search_contacts(db: Session, query: str):
     ).all()
 
 def get_upcoming_birthdays(db: Session):
-    from datetime import date, timedelta
+    from datetime import date, timedelta, datetime
+    
     today = date.today()
     next_week = today + timedelta(days=7)
-    return db.query(Contact).filter(Contact.birthday.between(today, next_week)).all()
+    
+    contacts = db.query(Contact).all()
+    upcoming_birthdays = []
+
+    for contact in contacts:
+        # Конвертувати дату народження до поточного року
+        birthday_this_year = contact.birthday.replace(year=today.year)
+        
+        # Якщо день народження вже пройшов цього року, то додати рік
+        if birthday_this_year < today:
+            birthday_this_year = contact.birthday.replace(year=today.year + 1)
+        
+        # Додати контакт до списку, якщо день народження в межах наступних 7 днів
+        if today <= birthday_this_year <= next_week:
+            upcoming_birthdays.append(contact)
+
+    return upcoming_birthdays
+
